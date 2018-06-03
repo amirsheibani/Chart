@@ -12,6 +12,8 @@
 		764DC1CD20C3A96C008BA9C9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764DC1CB20C3A96C008BA9C9 /* Main.storyboard */; };
 		764DC1CF20C3A96D008BA9C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764DC1CE20C3A96D008BA9C9 /* Assets.xcassets */; };
 		764DC1D220C3A96D008BA9C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764DC1D020C3A96D008BA9C9 /* LaunchScreen.storyboard */; };
+		764DC1DD20C3ACB3008BA9C9 /* ChartDelegat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 764DC1DB20C3ACB3008BA9C9 /* ChartDelegat.swift */; };
+		764DC1DE20C3ACB3008BA9C9 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 764DC1DC20C3ACB3008BA9C9 /* ChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		764DC1CE20C3A96D008BA9C9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		764DC1D120C3A96D008BA9C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		764DC1D320C3A96D008BA9C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		764DC1DB20C3ACB3008BA9C9 /* ChartDelegat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartDelegat.swift; sourceTree = "<group>"; };
+		764DC1DC20C3ACB3008BA9C9 /* ChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +58,7 @@
 		764DC1C620C3A96C008BA9C9 /* Chart */ = {
 			isa = PBXGroup;
 			children = (
+				764DC1DA20C3AC90008BA9C9 /* ChartView */,
 				764DC1C720C3A96C008BA9C9 /* AppDelegate.swift */,
 				764DC1C920C3A96C008BA9C9 /* ViewController.swift */,
 				764DC1CB20C3A96C008BA9C9 /* Main.storyboard */,
@@ -62,6 +67,15 @@
 				764DC1D320C3A96D008BA9C9 /* Info.plist */,
 			);
 			path = Chart;
+			sourceTree = "<group>";
+		};
+		764DC1DA20C3AC90008BA9C9 /* ChartView */ = {
+			isa = PBXGroup;
+			children = (
+				764DC1DB20C3ACB3008BA9C9 /* ChartDelegat.swift */,
+				764DC1DC20C3ACB3008BA9C9 /* ChartView.swift */,
+			);
+			path = ChartView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,6 +151,8 @@
 			files = (
 				764DC1CA20C3A96C008BA9C9 /* ViewController.swift in Sources */,
 				764DC1C820C3A96C008BA9C9 /* AppDelegate.swift in Sources */,
+				764DC1DD20C3ACB3008BA9C9 /* ChartDelegat.swift in Sources */,
+				764DC1DE20C3ACB3008BA9C9 /* ChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
