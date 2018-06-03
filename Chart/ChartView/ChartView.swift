@@ -106,8 +106,85 @@ class ChartView: UIView {
     func viewUpdate(){
         self.setNeedsDisplay()
     }
-    func addDataPoint(){
+    func addDataPoint(frame: CGRect) -> UIView{
+        let view = UIView(frame: frame)
         
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = view.bounds
+        gradientLayer.colors = [UIColor(rgb: 0x0000ff).cgColor, UIColor.clear.cgColor]
+        
+        
+        
+        view.backgroundColor = UIColor.clear
+        let v = frame.width / CGFloat(lineChart.titleHorizontal.count)
+        let h = frame.height / CGFloat(lineChart.titleVertical.count)
+        var count = lineChart.titleVertical.count - 1
+        var lastPoint = CGPoint.zero
+        let linePath = UIBezierPath()
+        let clippingPath = UIBezierPath()
+        var listPoint = [CGPoint]()
+        for index in 1...lineChart.dataPoint.count{
+            let pointPath = UIBezierPath()
+            count -= fundIndexValue(value: lineChart.dataPoint[index - 1], in: lineChart.titleVertical)
+            let point = CGPoint(x: v * CGFloat(index), y: h * CGFloat(count))
+            listPoint.append(point)
+            pointPath.addArc(withCenter: point, radius: 3, startAngle: 0, endAngle: .pi*2, clockwise: true)
+            let shapeLayer = CAShapeLayer()
+            shapeLayer.path = pointPath.cgPath
+            shapeLayer.fillColor = UIColor.clear.cgColor
+            shapeLayer.strokeColor = UIColor.white.cgColor
+            shapeLayer.lineWidth = 1.0
+            view.layer.addSublayer(shapeLayer)
+            count = lineChart.titleVertical.count - 1
+            
+            if lastPoint != CGPoint.zero{
+                linePath.move(to: lastPoint)
+                clippingPath.move(to: lastPoint)
+                linePath.addLine(to: point)
+                clippingPath.addLine(to: point)
+                let lineShapeLayer = CAShapeLayer()
+                lineShapeLayer.path = linePath.cgPath
+                lineShapeLayer.strokeColor = UIColor.white.cgColor
+                lineShapeLayer.lineWidth = 1
+                view.layer.addSublayer(lineShapeLayer)
+            }
+            lastPoint = point
+        }
+        clippingPath.move(to: lastPoint)
+        clippingPath.addLine(to: CGPoint(x: lastPoint.x, y:frame.height))
+        
+        clippingPath.move(to: CGPoint(x: lastPoint.x, y:frame.height))
+        clippingPath.addLine(to: CGPoint(x: (listPoint.first?.x)!, y:frame.height))
+        
+        clippingPath.move(to: CGPoint(x: (listPoint.first?.x)!, y:frame.height))
+        clippingPath.addLine(to: CGPoint(x: (listPoint.first?.x)!, y:(listPoint.first?.y)!))
+        clippingPath.close()
+//        clippingPath.addClip()
+        let lineShapeLayer = CAShapeLayer()
+        lineShapeLayer.path = clippingPath.cgPath
+        lineShapeLayer.strokeColor = UIColor.white.cgColor
+        
+        lineShapeLayer.lineWidth = 1
+        lineShapeLayer.fillRule = kCAFillRuleNonZero
+        lineShapeLayer.fillColor = UIColor.yellow.cgColor
+        view.layer.addSublayer(lineShapeLayer)
+//        gradientLayer.mask = lineShapeLayer
+        
+//        view.layer.addSublayer(gradientLayer)
+//        let rectPath = UIBezierPath(rect: frame)
+//        rectPath.fill()
+        
+        return view
+    }
+    func fundIndexValue(value: Int,in list:[String]) -> Int{
+        var i = 0
+        for index in 0..<list.count{
+            if list[index] == "\(value)"{
+                i = index
+                break
+            }
+        }
+        return i
     }
     func createAxisLabel(frame: CGRect,state: LabelFrameState) -> UIView {
         let view = UIView(frame: frame)
@@ -125,7 +202,6 @@ class ChartView: UIView {
                 label.textColor = UIColor.white
                 label.text = lineChart.titleVertical[index - 1]
                 view.addSubview(label)
-                
             }
         }else{
             view.backgroundColor = UIColor.clear
@@ -203,6 +279,12 @@ class ChartView: UIView {
         let horizontalLabelFrame = CGRect(x: x, y: y, width: width, height: height)
         view.addSubview(createAxisLabel(frame: horizontalLabelFrame,state: .horizontal))
         
+        x = lineChartRightMargin
+        y = lineChartTopMargin + 30
+        width = frame.width - lineChartRightMargin - lineChartLeftMargin
+        height = (frame.height / 2) - lineChartDownMargin - 30
+        view.addSubview(addDataPoint(frame: CGRect(x: x, y: y, width: width, height: height)))
+        
         return view
     }
     
@@ -253,6 +335,12 @@ class ChartView: UIView {
         height = lineChartDownMargin
         let horizontalLabelFrame = CGRect(x: x, y: y, width: width, height: height)
         view.addSubview(createAxisLabel(frame: horizontalLabelFrame,state: .horizontal))
+        
+        x = lineChartRightMargin
+        y = lineChartTopMargin + 30
+        width = frame.width - lineChartRightMargin - lineChartLeftMargin
+        height = frame.height - lineChartDownMargin - 30
+        view.addSubview(addDataPoint(frame: CGRect(x: x, y: y, width: width, height: height)))
         
         return view
     }
