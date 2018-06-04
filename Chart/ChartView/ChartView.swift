@@ -36,6 +36,7 @@ class ChartView: UIView {
     var lineChartTitle = "Line Chart Title"
     var lineChartTitleColor = UIColor.white
     var rotationState: RotationState!
+    var pointLocation = [CGPoint]()
     
     override func draw(_ rect: CGRect) {
         self.backgroundColor = backGrundColor
@@ -108,73 +109,61 @@ class ChartView: UIView {
     }
     func addDataPoint(frame: CGRect) -> UIView{
         let view = UIView(frame: frame)
-        
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = view.bounds
-        gradientLayer.colors = [UIColor(rgb: 0x0000ff).cgColor, UIColor.clear.cgColor]
-        
-        
-        
         view.backgroundColor = UIColor.clear
-        let v = frame.width / CGFloat(lineChart.titleHorizontal.count)
-        let h = frame.height / CGFloat(lineChart.titleVertical.count)
-        var count = lineChart.titleVertical.count - 1
-        var lastPoint = CGPoint.zero
-        let linePath = UIBezierPath()
-        let clippingPath = UIBezierPath()
-        var listPoint = [CGPoint]()
-        for index in 1...lineChart.dataPoint.count{
+        let locationList = calculatLocationPoint(frame: frame)
+        for index in 1...locationList.count{
             let pointPath = UIBezierPath()
-            count -= fundIndexValue(value: lineChart.dataPoint[index - 1], in: lineChart.titleVertical)
-            let point = CGPoint(x: v * CGFloat(index), y: h * CGFloat(count))
-            listPoint.append(point)
-            pointPath.addArc(withCenter: point, radius: 3, startAngle: 0, endAngle: .pi*2, clockwise: true)
+            pointPath.addArc(withCenter: pointLocation[index - 1], radius: 3, startAngle: 0, endAngle: .pi*2, clockwise: true)
             let shapeLayer = CAShapeLayer()
             shapeLayer.path = pointPath.cgPath
             shapeLayer.fillColor = UIColor.clear.cgColor
             shapeLayer.strokeColor = UIColor.white.cgColor
             shapeLayer.lineWidth = 1.0
             view.layer.addSublayer(shapeLayer)
-            count = lineChart.titleVertical.count - 1
-            
-            if lastPoint != CGPoint.zero{
-                linePath.move(to: lastPoint)
-                clippingPath.move(to: lastPoint)
-                linePath.addLine(to: point)
-                clippingPath.addLine(to: point)
-                let lineShapeLayer = CAShapeLayer()
-                lineShapeLayer.path = linePath.cgPath
-                lineShapeLayer.strokeColor = UIColor.white.cgColor
-                lineShapeLayer.lineWidth = 1
-                view.layer.addSublayer(lineShapeLayer)
-            }
-            lastPoint = point
         }
-        clippingPath.move(to: lastPoint)
-        clippingPath.addLine(to: CGPoint(x: lastPoint.x, y:frame.height))
         
-        clippingPath.move(to: CGPoint(x: lastPoint.x, y:frame.height))
-        clippingPath.addLine(to: CGPoint(x: (listPoint.first?.x)!, y:frame.height))
-        
-        clippingPath.move(to: CGPoint(x: (listPoint.first?.x)!, y:frame.height))
-        clippingPath.addLine(to: CGPoint(x: (listPoint.first?.x)!, y:(listPoint.first?.y)!))
-        clippingPath.close()
-//        clippingPath.addClip()
-        let lineShapeLayer = CAShapeLayer()
-        lineShapeLayer.path = clippingPath.cgPath
-        lineShapeLayer.strokeColor = UIColor.white.cgColor
-        
-        lineShapeLayer.lineWidth = 1
-        lineShapeLayer.fillRule = kCAFillRuleNonZero
-        lineShapeLayer.fillColor = UIColor.yellow.cgColor
-        view.layer.addSublayer(lineShapeLayer)
-//        gradientLayer.mask = lineShapeLayer
-        
-//        view.layer.addSublayer(gradientLayer)
-//        let rectPath = UIBezierPath(rect: frame)
-//        rectPath.fill()
-        
+//        let gradientLayer = CAGradientLayer()
+//        gradientLayer.frame = view.bounds
+//        gradientLayer.colors = [UIColor(rgb: 0x0000ff).cgColor, UIColor.clear.cgColor]
+//        view.backgroundColor = UIColor.clear
+//        let v = frame.width / CGFloat(lineChart.titleHorizontal.count)
+//        let h = frame.height / CGFloat(lineChart.titleVertical.count)
+//        var count = lineChart.titleVertical.count - 1
+//        var lastPoint = CGPoint.zero
+//        var listPoint = [CGPoint]()
+//        for index in 1...lineChart.dataPoint.count{
+//            let pointPath = UIBezierPath()
+//            count -= fundIndexValue(value: lineChart.dataPoint[index - 1], in: lineChart.titleVertical)
+//            let point = CGPoint(x: v * CGFloat(index), y: h * CGFloat(count))
+//            listPoint.append(point)
+//            pointPath.addArc(withCenter: point, radius: 3, startAngle: 0, endAngle: .pi*2, clockwise: true)
+//            let shapeLayer = CAShapeLayer()
+//            shapeLayer.path = pointPath.cgPath
+//            shapeLayer.fillColor = UIColor.clear.cgColor
+//            shapeLayer.strokeColor = UIColor.white.cgColor
+//            shapeLayer.lineWidth = 1.0
+//            view.layer.addSublayer(shapeLayer)
+//            
+//            lastPoint = point
+//        }
+//        listPoint.append(CGPoint(x: lastPoint.x, y:frame.height))
+//        listPoint.append(CGPoint(x: (listPoint.first?.x)!, y:frame.height))
+//        listPoint.append(CGPoint(x: (listPoint.first?.x)!, y:(listPoint.first?.y)!))
+//        self.pointLocation = listPoint
         return view
+    }
+    func calculatLocationPoint(frame: CGRect) -> [CGPoint] {
+        var pointList = [CGPoint]()
+        let v = frame.width / CGFloat(lineChart.titleHorizontal.count)
+        let h = frame.height / CGFloat(lineChart.titleVertical.count)
+        var count = lineChart.titleVertical.count - 1
+        for index in 1...lineChart.dataPoint.count{
+            count -= fundIndexValue(value: lineChart.dataPoint[index - 1], in: lineChart.titleVertical)
+            let point = CGPoint(x: v * CGFloat(index), y: h * CGFloat(count))
+            pointList.append(point)
+            count = lineChart.titleVertical.count - 1
+        }
+        return pointList
     }
     func fundIndexValue(value: Int,in list:[String]) -> Int{
         var i = 0
