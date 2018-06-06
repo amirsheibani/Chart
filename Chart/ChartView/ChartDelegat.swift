@@ -13,10 +13,20 @@ enum ChartType {
     case pie
     case bar
 }
+enum DataPointStatus{
+    case period
+    case fertility
+    case PMS
+    case normal
+}
+struct DataPoint {
+    var temprecher: Int!
+    var status: DataPointStatus!
+}
 struct StructLineChart {
     var titleHorizontal: [String]!
     var titleVertical: [String]!
-    var dataPoint: [Int]!
+    var dataPoint: [DataPoint]!
 }
 struct StructPieChart {
     var totalCount: Int!

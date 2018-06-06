@@ -107,49 +107,112 @@ class ChartView: UIView {
     func viewUpdate(){
         self.setNeedsDisplay()
     }
-    func addDataPoint(frame: CGRect) -> UIView{
+    func createAreaForPoints(frame: CGRect) -> UIView{
         let view = UIView(frame: frame)
-        view.backgroundColor = UIColor.clear
-        let locationList = calculatLocationPoint(frame: frame)
-        for index in 1...locationList.count{
-            let pointPath = UIBezierPath()
-            pointPath.addArc(withCenter: pointLocation[index - 1], radius: 3, startAngle: 0, endAngle: .pi*2, clockwise: true)
+        let areaPath = UIBezierPath()
+        var myPointLocation = pointLocation
+        myPointLocation.append(CGPoint(x: (pointLocation.last?.x)!, y:frame.height))
+        myPointLocation.append(CGPoint(x: (pointLocation.first?.x)!, y:frame.height))
+        myPointLocation.append(CGPoint(x: (pointLocation.first?.x)!, y:(pointLocation.first?.y)!))
+        areaPath.move(to: myPointLocation.first!)
+        for index in 2...myPointLocation.count{
+            areaPath.addLine(to: myPointLocation[index - 1])
+        }
+        areaPath.close()
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = areaPath.cgPath
+        shapeLayer.strokeColor = UIColor.clear.cgColor
+        shapeLayer.lineWidth = 1.0
+        view.layer.addSublayer(shapeLayer)
+        let gradient = CAGradientLayer()
+        gradient.frame = view.bounds
+        gradient.colors = [UIColor(rgb: 0xf45041).cgColor, UIColor.clear.cgColor]
+        gradient.mask = shapeLayer
+        view.layer.addSublayer(gradient)
+        return view
+    }
+    func createAreaForPointFertility(frame: CGRect) -> UIView{
+        let view = UIView(frame: frame)
+        let areaPath = UIBezierPath()
+        let linePath = UIBezierPath()
+        var myPointLocation = [CGPoint]()
+        for index in 1...pointLocation.count{
+            if lineChart.dataPoint[index - 1].status == .fertility{
+                myPointLocation.append(pointLocation[index - 1])
+            }
+        }
+        linePath.move(to: CGPoint(x: (myPointLocation.first?.x)!, y: 0))
+        linePath.addLine(to: CGPoint(x: (myPointLocation.first?.x)!, y: frame.height))
+        linePath.move(to: CGPoint(x: (myPointLocation.last?.x)!, y: 0))
+        linePath.addLine(to: CGPoint(x: (myPointLocation.last?.x)!, y: frame.height))
+        linePath.close()
+        let shapeLayerLine = CAShapeLayer()
+        shapeLayerLine.path = linePath.cgPath
+        shapeLayerLine.strokeColor = UIColor(rgb: 0x42f4aa).cgColor
+        shapeLayerLine.lineWidth = 1.0
+        view.layer.addSublayer(shapeLayerLine)
+        
+        myPointLocation.append(CGPoint(x: (myPointLocation.last?.x)!, y:frame.height))
+        myPointLocation.append(CGPoint(x: (myPointLocation.first?.x)!, y:frame.height))
+        myPointLocation.append(CGPoint(x: (myPointLocation.first?.x)!, y:(myPointLocation.first?.y)!))
+        areaPath.move(to: myPointLocation.first!)
+        for index in 2...myPointLocation.count{
+            areaPath.addLine(to: myPointLocation[index - 1])
+        }
+        areaPath.close()
+        let shapeLayerArea = CAShapeLayer()
+        shapeLayerArea.path = areaPath.cgPath
+        shapeLayerArea.strokeColor = UIColor.clear.cgColor
+        shapeLayerArea.lineWidth = 1.0
+        view.layer.addSublayer(shapeLayerArea)
+        let gradient = CAGradientLayer()
+        gradient.frame = view.bounds
+        gradient.colors = [UIColor(rgb: 0x42f4aa).cgColor, UIColor.clear.cgColor]
+        gradient.mask = shapeLayerArea
+        view.layer.addSublayer(gradient)
+        return view
+    }
+    func createLineForPoints(frame: CGRect) -> UIView{
+        let view = UIView(frame: frame)
+        let linePath = UIBezierPath()
+        linePath.move(to: pointLocation.first!)
+        for index in 2...pointLocation.count{
+            linePath.addLine(to: pointLocation[index - 1])
             let shapeLayer = CAShapeLayer()
-            shapeLayer.path = pointPath.cgPath
+            shapeLayer.path = linePath.cgPath
             shapeLayer.fillColor = UIColor.clear.cgColor
             shapeLayer.strokeColor = UIColor.white.cgColor
             shapeLayer.lineWidth = 1.0
             view.layer.addSublayer(shapeLayer)
         }
-        
-//        let gradientLayer = CAGradientLayer()
-//        gradientLayer.frame = view.bounds
-//        gradientLayer.colors = [UIColor(rgb: 0x0000ff).cgColor, UIColor.clear.cgColor]
-//        view.backgroundColor = UIColor.clear
-//        let v = frame.width / CGFloat(lineChart.titleHorizontal.count)
-//        let h = frame.height / CGFloat(lineChart.titleVertical.count)
-//        var count = lineChart.titleVertical.count - 1
-//        var lastPoint = CGPoint.zero
-//        var listPoint = [CGPoint]()
-//        for index in 1...lineChart.dataPoint.count{
-//            let pointPath = UIBezierPath()
-//            count -= fundIndexValue(value: lineChart.dataPoint[index - 1], in: lineChart.titleVertical)
-//            let point = CGPoint(x: v * CGFloat(index), y: h * CGFloat(count))
-//            listPoint.append(point)
-//            pointPath.addArc(withCenter: point, radius: 3, startAngle: 0, endAngle: .pi*2, clockwise: true)
-//            let shapeLayer = CAShapeLayer()
-//            shapeLayer.path = pointPath.cgPath
-//            shapeLayer.fillColor = UIColor.clear.cgColor
-//            shapeLayer.strokeColor = UIColor.white.cgColor
-//            shapeLayer.lineWidth = 1.0
-//            view.layer.addSublayer(shapeLayer)
-//            
-//            lastPoint = point
-//        }
-//        listPoint.append(CGPoint(x: lastPoint.x, y:frame.height))
-//        listPoint.append(CGPoint(x: (listPoint.first?.x)!, y:frame.height))
-//        listPoint.append(CGPoint(x: (listPoint.first?.x)!, y:(listPoint.first?.y)!))
-//        self.pointLocation = listPoint
+        linePath.close()
+        return view
+    }
+    func addDataPoint(frame: CGRect) -> UIView{
+        let view = UIView(frame: frame)
+        view.backgroundColor = UIColor.clear
+        for index in 1...pointLocation.count{
+            let pointPath = UIBezierPath()
+            pointPath.addArc(withCenter: pointLocation[index - 1], radius: 3, startAngle: 0, endAngle: .pi*2, clockwise: true)
+            let shapeLayer = CAShapeLayer()
+            shapeLayer.path = pointPath.cgPath
+            shapeLayer.fillColor = UIColor.clear.cgColor
+            if lineChart.dataPoint[index - 1].status == .period{
+                shapeLayer.strokeColor = UIColor.red.cgColor
+                shapeLayer.fillColor = UIColor.red.cgColor
+            }else if lineChart.dataPoint[index - 1].status == .fertility{
+                shapeLayer.strokeColor = UIColor(rgb: 0x42f4aa).cgColor
+                shapeLayer.fillColor = UIColor(rgb: 0x42f4aa).cgColor
+            }else if lineChart.dataPoint[index - 1].status == .PMS{
+                shapeLayer.strokeColor = UIColor.magenta.cgColor
+                shapeLayer.fillColor = UIColor.magenta.cgColor
+            }else if lineChart.dataPoint[index - 1].status == .normal{
+                shapeLayer.strokeColor = UIColor.white.cgColor
+                shapeLayer.fillColor = UIColor.white.cgColor
+            }
+            shapeLayer.lineWidth = 1.0
+            view.layer.addSublayer(shapeLayer)
+        }
         return view
     }
     func calculatLocationPoint(frame: CGRect) -> [CGPoint] {
@@ -158,7 +221,7 @@ class ChartView: UIView {
         let h = frame.height / CGFloat(lineChart.titleVertical.count)
         var count = lineChart.titleVertical.count - 1
         for index in 1...lineChart.dataPoint.count{
-            count -= fundIndexValue(value: lineChart.dataPoint[index - 1], in: lineChart.titleVertical)
+            count -= fundIndexValue(value: lineChart.dataPoint[index - 1].temprecher, in: lineChart.titleVertical)
             let point = CGPoint(x: v * CGFloat(index), y: h * CGFloat(count))
             pointList.append(point)
             count = lineChart.titleVertical.count - 1
@@ -272,8 +335,11 @@ class ChartView: UIView {
         y = lineChartTopMargin + 30
         width = frame.width - lineChartRightMargin - lineChartLeftMargin
         height = (frame.height / 2) - lineChartDownMargin - 30
+        pointLocation = calculatLocationPoint(frame: CGRect(x: x, y: y, width: width, height: height))
+        view.addSubview(createAreaForPoints(frame: CGRect(x: x, y: y, width: width, height: height)))
+        view.addSubview(createAreaForPointFertility(frame: CGRect(x: x, y: y, width: width, height: height)))
+        view.addSubview(createLineForPoints(frame: CGRect(x: x, y: y, width: width, height: height)))
         view.addSubview(addDataPoint(frame: CGRect(x: x, y: y, width: width, height: height)))
-        
         return view
     }
     
@@ -329,8 +395,11 @@ class ChartView: UIView {
         y = lineChartTopMargin + 30
         width = frame.width - lineChartRightMargin - lineChartLeftMargin
         height = frame.height - lineChartDownMargin - 30
+        pointLocation = calculatLocationPoint(frame: CGRect(x: x, y: y, width: width, height: height))
+        view.addSubview(createAreaForPoints(frame: CGRect(x: x, y: y, width: width, height: height)))
+        view.addSubview(createAreaForPointFertility(frame: CGRect(x: x, y: y, width: width, height: height)))
+        view.addSubview(createLineForPoints(frame: CGRect(x: x, y: y, width: width, height: height)))
         view.addSubview(addDataPoint(frame: CGRect(x: x, y: y, width: width, height: height)))
-        
         return view
     }
     

@@ -68,12 +68,26 @@ extension ViewController: ChartDelegate{
         structPieChart.itemsValue = ["good" : 5,"bad" : 10,"derty": 15]
         structPieChart.itemsColor = [UIColor.red,UIColor.cyan,UIColor.green]
         var structLineChart = StructLineChart()
-
+        var dataPoint = [DataPoint]()
         titleHorizontalLine = titleVerticalBar
-        dataPointLine =  [37,36,37,38,39,40,41,40,39,36,37,36,37,38,39,40,41,40,39,36,37,36,37,38,39,40,41,40]
+        dataPointLine =  [37,37,37,38,37,37,37,37,37,38,38,38,38,38,39,38,38,37,37,37,37,37,37,38,37,37,37,37]
         titleVerticalLine = ["36","37","38","39","40","41","42"]
         structLineChart.titleHorizontal = titleHorizontalLine
-        structLineChart.dataPoint = dataPointLine
+        for index in 1...dataPointLine.count{
+            var d = DataPoint()
+            if index < 5{
+                d.status = .period
+            }else if index >= (dataPointLine.count / 2) - 4  && index <= (dataPointLine.count / 2) + 1{
+                d.status = .fertility
+            }else if index >= dataPointLine.count - 3{
+                d.status = .PMS
+            }else{
+                d.status = .normal
+            }
+            d.temprecher = dataPointLine[index - 1]
+            dataPoint.append(d)
+        }
+        structLineChart.dataPoint = dataPoint
         structLineChart.titleVertical = titleVerticalLine
         
         v[.line] = structLineChart
