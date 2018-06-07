@@ -20,7 +20,7 @@ enum DataPointStatus{
     case normal
 }
 struct DataPoint {
-    var temprecher: Int!
+    var value: Int!
     var status: DataPointStatus!
 }
 struct StructLineChart {

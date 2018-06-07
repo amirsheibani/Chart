@@ -24,7 +24,7 @@ class ChartView: UIView {
 
     var delegate: ChartDelegate?
     let backGrundColor = UIColor(rgb: 0x193F6C)
-    var barChart: StructBarChart!
+    var barChartData: StructBarChart!
     var pieChart: StructPieChart!
     var lineChartData: StructLineChart!
     
@@ -33,7 +33,7 @@ class ChartView: UIView {
     override func draw(_ rect: CGRect) {
         self.backgroundColor = backGrundColor
         let data = delegate?.chartData()
-        barChart = data![.bar] as! StructBarChart
+        barChartData = data![.bar] as! StructBarChart
         lineChartData = data![.line] as! StructLineChart
         pieChart = data![.pie] as! StructPieChart
         
@@ -49,7 +49,7 @@ class ChartView: UIView {
             contentScrollView.isPagingEnabled = true
             var xCoordinate: CGFloat = 0.0
             let viewOne = UIView(frame: CGRect(x: xCoordinate,y: 0.0 ,width: rect.width ,height: rect.height))
-            viewOne.backgroundColor = UIColor.clear
+            viewOne.backgroundColor = backGrundColor
             viewOne.removeFromSuperview()
             let lineChart = LineChart(lineChart: lineChartData,rotationState: rotationState,lineChartTitle: "Line Chart Title",lineChartTitleColor: UIColor.white)
             viewOne.addSubview(lineChart.createLineChartMax(frame: rect))
@@ -59,6 +59,8 @@ class ChartView: UIView {
             let viewTow = UIView(frame: CGRect(x: xCoordinate,y: 0.0 ,width: rect.width ,height: rect.height))
             viewTow.backgroundColor = backGrundColor
             viewTow.removeFromSuperview()
+            let barChart = BarChart(barChart: barChartData, rotationState: rotationState, barChartTitle: "Bar Chart Title", barChartTitleColor: UIColor.white)
+            viewTow.addSubview(barChart.createBarChartMax(frame: rect))
             contentScrollView.addSubview(viewTow)
 
             xCoordinate += rect.width
@@ -86,15 +88,18 @@ class ChartView: UIView {
             let viewTow = UIView(frame: CGRect(x: 0.0,y: yCoordinate ,width: rect.width,height: rect.height/2))
             viewTow.backgroundColor = backGrundColor
             viewTow.removeFromSuperview()
+            let barChart = BarChart(barChart: barChartData, rotationState: rotationState, barChartTitle: "Bar Chart Title", barChartTitleColor: UIColor.white)
+            viewTow.addSubview(barChart.createBarChartMin(frame: rect))
             contentScrollView.addSubview(viewTow)
             
             yCoordinate += rect.height / 2
-            let viewThere = UIView(frame: CGRect(x: 0.0,y: yCoordinate ,width: rect.width,height: rect.height/2))
+            let viewThere = UIView(frame: CGRect(x: 0.0,y: yCoordinate ,width: rect.width,height: rect.height))
             viewThere.backgroundColor = backGrundColor
             viewThere.removeFromSuperview()
+            
             contentScrollView.addSubview(viewThere)
             
-            contentScrollView.contentSize = CGSize(width: (rect.width), height: (rect.height / 2) * 3)
+            contentScrollView.contentSize = CGSize(width: (rect.width), height: (rect.height) * 2)
             contentScrollView.center = CGPoint(x: rect.width  / CGFloat(2), y: rect.height / CGFloat(2))
             self.addSubview(contentScrollView)
         }

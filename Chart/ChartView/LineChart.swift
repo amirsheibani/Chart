@@ -139,7 +139,7 @@ class LineChart {
         let h = frame.height / CGFloat(lineChart.titleVertical.count)
         var count = lineChart.titleVertical.count - 1
         for index in 1...lineChart.dataPoint.count{
-            count -= fundIndexValue(value: lineChart.dataPoint[index - 1].temprecher, in: lineChart.titleVertical)
+            count -= fundIndexValue(value: lineChart.dataPoint[index - 1].value, in: lineChart.titleVertical)
             let point = CGPoint(x: v * CGFloat(index), y: h * CGFloat(count))
             pointList.append(point)
             count = lineChart.titleVertical.count - 1

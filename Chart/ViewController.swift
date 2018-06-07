@@ -13,7 +13,8 @@ class ViewController: UIViewController {
     @IBOutlet var chartView: ChartView!
     
     
-    var titleHorizontalBar = ["اسفند","بهمن","دی","آذر","آبان","مهر","شهریور","مرداد","تیر","خرداد","اردیبهشت","فروردین"]
+//    var titleHorizontalBar = ["اسفند","بهمن","دی","آذر","آبان","مهر","شهریور","مرداد","تیر","خرداد","اردیبهشت","فروردین"]
+    var titleHorizontalBar = ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"]
     var titleVerticalBar = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28"]
     var valueDataBarLayerOneBar = [28,25,26,27,28,27,26,25,25,15,18,24]
     var valueDataBarLayerTowBar = [5,5,4,5,5,6,6,6,6,5,5,6]
@@ -84,7 +85,7 @@ extension ViewController: ChartDelegate{
             }else{
                 d.status = .normal
             }
-            d.temprecher = dataPointLine[index - 1]
+            d.value = dataPointLine[index - 1]
             dataPoint.append(d)
         }
         structLineChart.dataPoint = dataPoint
